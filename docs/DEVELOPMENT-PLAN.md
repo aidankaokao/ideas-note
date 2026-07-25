@@ -141,6 +141,7 @@ npm run dev                                              # http://localhost:5173
 - **程式配合**：`api.py` 讀 `PORT` env（Cloud Run 注入 8080、本機仍 8000）＋伺服 static；`requirements.txt` 已含 `psycopg[binary]`；env：`DATABASE_URL`（Neon `postgresql+psycopg://…?sslmode=require`）、`JWT_SECRET`。
 - Cloud Run 設定重點：port 8080、記憶體 1GiB、逾時 600s（SSE）、執行個體 0~1、允許未驗證叫用（App 內建帳密）。
 - 待辦（之後）：正式環境改表結構時導入 Alembic（`database.md` §7）。
+- **上線後修正（2026-07-25）**：SPA catch-all（`GET /{full_path:path}`）原本註冊在 include_router 之前，把所有 GET `/api/*` 攔走回 index.html（前端報「Unexpected token '<' … not valid JSON」）。已移到**所有 API 路由之後**並加註警告——之後動 `api.py` 路由順序時務必維持：`/api` 路由在前、static/catch-all 最後。
 
 ## 8. 未來可能的擴充（已討論、未排程）
 
