@@ -35,7 +35,18 @@ def health():
     return {"status": "ok"}
 
 
+app.include_router(auth.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
+app.include_router(notes.router, prefix="/api")
+app.include_router(topics.router, prefix="/api")
+app.include_router(providers.router, prefix="/api")
+app.include_router(agent.router, prefix="/api")
+app.include_router(mentor.router, prefix="/api")
+app.include_router(mindmaps.router, prefix="/api")
+
+
 # ── 正式部署（Cloud Run 單一容器）：backend/static/ 存在時，由 FastAPI 直接伺服前端 build ──
+# ⚠️ 這段（尤其 catch-all）必須放在所有 /api 路由「之後」註冊，否則 GET /api/* 會被攔走回 HTML。
 _STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 if os.path.isdir(_STATIC_DIR):
     from fastapi.responses import FileResponse
@@ -47,23 +58,13 @@ if os.path.isdir(_STATIC_DIR):
         name="assets",
     )
 
-    # SPA fallback：/api 路由已先註冊會優先匹配；其餘路徑回 index.html（前端路由重整不 404）
+    # SPA fallback：非 /api、非實體檔的路徑一律回 index.html（前端路由重整不 404）
     @app.get("/{full_path:path}", include_in_schema=False)
     def spa(full_path: str):
         candidate = os.path.join(_STATIC_DIR, full_path)
         if full_path and os.path.isfile(candidate):
             return FileResponse(candidate)
         return FileResponse(os.path.join(_STATIC_DIR, "index.html"))
-
-
-app.include_router(auth.router, prefix="/api")
-app.include_router(users.router, prefix="/api")
-app.include_router(notes.router, prefix="/api")
-app.include_router(topics.router, prefix="/api")
-app.include_router(providers.router, prefix="/api")
-app.include_router(agent.router, prefix="/api")
-app.include_router(mentor.router, prefix="/api")
-app.include_router(mindmaps.router, prefix="/api")
 
 
 if __name__ == "__main__":
