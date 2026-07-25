@@ -1,0 +1,53 @@
+# docker-compose 起手檔。複製到專案【根目錄】。搭配根目錄 .env（從 deploy/.env.example 複製）。
+# 慣例：只寫 image 不寫 build（image 用 build.sh 自己 build）；每 service 有 logging + labels；
+#       後端 ports 寫出但註解（開發打開、上線註解）；對外 port 走 .env。
+# 用舊命令：docker-compose up -d。說明見 deploy-guide.md。
+version: "3.8"
+
+services:
+  backend:
+    image: ${IMAGE_PREFIX}-backend:${IMAGE_TAG}   # 命名走 .env（見 build.sh），不寫 build:
+    container_name: ${IMAGE_PREFIX}-backend
+    env_file: backend/.env                   # 後端應用層 env（DB / LLM）
+    volumes:
+      - ./backend/data:/app/backend/data     # SQLite 檔 / 產出（見 database.md）
+    # ── 後端對外 port：開發期打開查看，上線時整段註解掉不對外 ──
+    # ports:
+    #   - "${BACKEND_PORT}:8000"             # 容器內固定 8000（api.py 寫死），對外走 .env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "developer=${DEVELOPER_NAME}"
+      - "project.path=${PROJECT_PATH}"
+    restart: unless-stopped
+    networks:
+      - custom-network
+
+  frontend:
+    image: ${IMAGE_PREFIX}-frontend:${IMAGE_TAG}  # 命名走 .env
+    container_name: ${IMAGE_PREFIX}-frontend
+    environment:
+      - APP_ROUTE=${APP_ROUTE}               # nginx.conf.template envsubst 用（把前端掛在 /<route>/）
+    ports:
+      - "${FRONTEND_PORT}:80"                # 對外 FRONTEND_PORT → 容器 80；實際入口 /<APP_ROUTE>/
+    depends_on:
+      - backend
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "developer=${DEVELOPER_NAME}"
+      - "project.path=${PROJECT_PATH}"
+    restart: unless-stopped
+    networks:
+      - custom-network
+
+networks:
+  custom-network:
+    external: true                           # 用外部既有網路；沒有先建：docker network create "$NETWORK_NAME"
+    name: ${NETWORK_NAME}

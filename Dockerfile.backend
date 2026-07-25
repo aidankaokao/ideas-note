@@ -1,0 +1,24 @@
+# 後端 image 起手檔。複製到專案【根目錄】。build context 為專案根（COPY backend/...）。
+# Python 3.11、容器內埠 8000、CMD python api.py（api.py 底部有 uvicorn.run，見 backend-conventions.md）。
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY backend/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY backend/ /app/backend/
+
+RUN mkdir -p /app/backend/data      # SQLite 檔 / 產出（掛 volume）
+
+WORKDIR /app/backend
+
+EXPOSE 8000                         # 容器內埠；對外由 compose .env 映射
+
+CMD ["python", "api.py"]
+
+# ── 若後端需要系統套件，在上面 pip install 之前加一段（範例：中文字體 + 繪圖/PDF 依賴）──
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#         fonts-noto-cjk fontconfig \
+#         libcairo2 libpango-1.0-0 libpangoft2-1.0-0 libgdk-pixbuf-2.0-0 libffi-dev shared-mime-info && \
+#     fc-cache -fv && apt-get clean && rm -rf /var/lib/apt/lists/*

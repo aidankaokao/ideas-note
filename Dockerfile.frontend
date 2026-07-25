@@ -1,0 +1,28 @@
+# 前端 image 起手檔。複製到專案【根目錄】。多階段：node build → nginx 靜態伺服。
+# 支援 route 部署：build 時帶 VITE_BASE_PATH=/<APP_ROUTE>/（由 build.sh 從 .env 帶入）。
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install --legacy-peer-deps
+
+COPY frontend/ .
+
+# route / 子路徑部署：build 時可指定 base path（預設 /）。
+# 例：docker build --build-arg VITE_BASE_PATH=/myapp/ ...
+ARG VITE_BASE_PATH=/
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+# 路由版（推薦）：用 nginx template，容器啟動時 envsubst 讀 APP_ROUTE 代換（見 frontend/nginx.conf.template）
+COPY frontend/nginx.conf.template /etc/nginx/templates/default.conf.template
+# 純根路徑、不要 route 時，改成下一行（並讓 APP_ROUTE 留空 / VITE_BASE_PATH=/）：
+# COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

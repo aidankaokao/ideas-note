@@ -1,0 +1,38 @@
+{
+  "//": "前端 starter package.json（起手檔）。這裡只放三種風格【共用】的核心依賴；各風格額外需要的套件見對應的 frontend-style-*.md，裝進來即可。tailwind.config 也依風格文件各自貼（不同風格數值不同）。",
+  "name": "frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0",
+    "zustand": "^4.5.0",
+    "lucide-react": "^0.344.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.0",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7",
+    "postcss": "^8.4.35",
+    "autoprefixer": "^10.4.17"
+  },
+  "notes-per-style": {
+    "formal": "另裝 @radix-ui/react-*（dialog/select/tabs/dropdown-menu/switch/toast）+ recharts（見 frontend-style-formal.md §1）",
+    "glass-wave": "自建 shadcn 風元件，通常再裝 @radix-ui 需要的 primitives（見 frontend-style-glass-wave.md）",
+    "aurora-glass": "另裝 sonner（toast）+ 需要的 @radix-ui primitives（見 frontend-style-aurora-glass.md §1）"
+  }
+}

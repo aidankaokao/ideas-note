@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aurora Glass tokens（見 reference/frontend/frontend-style-aurora-glass.md §2、§3、§4、§11） */
+@layer base {
+  :root {
+    --background: 200 60% 98%;
+    --foreground: 222 30% 18%;
+    --card: 210 40% 100%;
+    --card-foreground: 222 30% 18%;
+    --popover: 210 40% 100%;
+    --popover-foreground: 222 30% 18%;
+    --primary: 244 68% 62%;
+    --primary-foreground: 210 40% 99%;
+    --secondary: 180 45% 92%;
+    --secondary-foreground: 200 40% 22%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 18% 46%;
+    --accent: 172 66% 80%;
+    --accent-foreground: 200 45% 20%;
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 210 40% 99%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 244 68% 62%;
+    --radius: 1rem;
+
+    /* 品牌漸層（核心識別，務必走變數） */
+    --brand-from: #14B8A6;
+    --brand-to:   #6366F1;
+
+    /* 背景光暈 blob */
+    --glow-1: 172 70% 60%;
+    --glow-2: 244 80% 72%;
+    --glow-3: 205 90% 72%;
+
+    /* body 三層背景漸層 */
+    --bg-a: 180 80% 92%;
+    --bg-b: 250 90% 94%;
+    --bg-c: 205 60% 98%;
+    --bg-d: 230 55% 96%;
+  }
+
+  * { @apply border-border; }
+
+  body {
+    @apply text-foreground;
+    background:
+      radial-gradient(1200px 800px at 10% -10%, hsl(var(--bg-a)) 0%, transparent 55%),
+      radial-gradient(1000px 700px at 100% 0%, hsl(var(--bg-b)) 0%, transparent 55%),
+      linear-gradient(180deg, hsl(var(--bg-c)) 0%, hsl(var(--bg-d)) 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply border border-white/40 bg-white/55 backdrop-blur-xl;
+    box-shadow:
+      0 8px 32px -8px hsl(220 40% 40% / 0.18),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.6);
+  }
+  .glass-soft {
+    @apply border border-white/30 bg-white/35 backdrop-blur-md;
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
+  }
+  .glass-strong {
+    @apply border border-white/50 bg-white/70 backdrop-blur-2xl;
+    box-shadow:
+      0 12px 40px -8px hsl(220 40% 40% / 0.24),
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.7);
+  }
+
+  .bg-brand-gradient {
+    background-image: linear-gradient(to bottom right, var(--brand-from), var(--brand-to));
+  }
+  .bg-brand-tint {
+    background-image: linear-gradient(to bottom right,
+      color-mix(in srgb, var(--brand-from) 12%, transparent),
+      color-mix(in srgb, var(--brand-to) 12%, transparent));
+  }
+  .text-gradient {
+    background-image: linear-gradient(120deg, var(--brand-from), var(--brand-to));
+    @apply bg-clip-text text-transparent;
+  }
+
+  .nice-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+  .nice-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.25);
+    border-radius: 3px;
+  }
+
+  /* 問答回覆的 markdown 呈現 */
+  .markdown { @apply text-sm leading-relaxed; }
+  .markdown h1, .markdown h2, .markdown h3, .markdown h4 { font-weight: 600; margin: 0.75em 0 0.25em; }
+  .markdown p { margin: 0.4em 0; }
+  .markdown ul { list-style: disc; padding-left: 1.25rem; margin: 0.4em 0; }
+  .markdown ol { list-style: decimal; padding-left: 1.25rem; margin: 0.4em 0; }
+  .markdown code {
+    background: hsl(var(--muted));
+    padding: 0.1em 0.35em;
+    border-radius: 0.375rem;
+    font-size: 0.85em;
+  }
+  .markdown a { color: hsl(var(--primary)); text-decoration: underline; }
+  .markdown blockquote {
+    border-left: 3px solid hsl(var(--primary) / 0.4);
+    padding-left: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    margin: 0.4em 0;
+  }
+}
+
+/* ── 可切換主題盤（§11）：只覆寫變數，玻璃結構不變 ── */
+[data-theme="sunset-coral"] {
+  --primary: 16 90% 62%;  --ring: 16 90% 62%;  --accent: 32 90% 82%;
+  --brand-from: #FB7185;  --brand-to: #F59E0B;
+  --glow-1: 16 90% 72%;   --glow-2: 32 90% 72%;  --glow-3: 350 90% 78%;
+  --bg-a: 16 90% 94%;     --bg-b: 32 90% 94%;    --bg-c: 20 60% 98%; --bg-d: 350 55% 97%;
+}
+[data-theme="rose-quartz"] {
+  --primary: 271 81% 63%; --ring: 271 81% 63%;   --accent: 322 85% 88%;
+  --brand-from: #F472B6;  --brand-to: #A855F7;
+  --glow-1: 322 85% 75%;  --glow-2: 271 85% 75%; --glow-3: 292 80% 80%;
+  --bg-a: 322 80% 95%;    --bg-b: 271 80% 95%;   --bg-c: 300 50% 98%; --bg-d: 280 50% 97%;
+}
+[data-theme="mint-meadow"] {
+  --primary: 189 94% 40%; --ring: 189 94% 40%;   --accent: 158 70% 84%;
+  --brand-from: #34D399;  --brand-to: #06B6D4;
+  --glow-1: 158 70% 68%;  --glow-2: 189 80% 68%; --glow-3: 172 75% 72%;
+  --bg-a: 158 70% 93%;    --bg-b: 189 75% 93%;   --bg-c: 170 55% 98%; --bg-d: 190 50% 96%;
+}
+[data-theme="lavender-mist"] {
+  --primary: 251 77% 66%; --ring: 251 77% 66%;   --accent: 271 85% 88%;
+  --brand-from: #818CF8;  --brand-to: #C084FC;
+  --glow-1: 234 85% 78%;  --glow-2: 271 85% 80%; --glow-3: 252 80% 82%;
+  --bg-a: 234 80% 95%;    --bg-b: 271 80% 95%;   --bg-c: 250 55% 98%; --bg-d: 260 50% 97%;
+}
+[data-theme="ocean-deep"] {
+  --primary: 217 91% 55%; --ring: 217 91% 55%;   --accent: 187 80% 84%;
+  --brand-from: #3B82F6;  --brand-to: #22D3EE;
+  --glow-1: 217 85% 70%;  --glow-2: 187 80% 66%; --glow-3: 202 85% 70%;
+  --bg-a: 217 80% 94%;    --bg-b: 187 75% 93%;   --bg-c: 205 60% 98%; --bg-d: 215 55% 96%;
+}
+[data-theme="golden-hour"] {
+  --primary: 32 95% 50%;  --ring: 32 95% 50%;    --accent: 45 95% 84%;
+  --brand-from: #FBBF24;  --brand-to: #FB7185;
+  --glow-1: 45 95% 70%;   --glow-2: 350 90% 76%; --glow-3: 25 95% 74%;
+  --bg-a: 45 90% 93%;     --bg-b: 350 80% 95%;   --bg-c: 35 65% 98%; --bg-d: 15 60% 97%;
+}
+[data-theme="graphite-frost"] {
+  --primary: 215 16% 40%; --ring: 215 16% 40%;   --accent: 215 25% 88%;
+  --brand-from: #64748B;  --brand-to: #94A3B8;
+  --glow-1: 215 25% 75%;  --glow-2: 215 20% 80%; --glow-3: 200 20% 80%;
+  --bg-a: 215 30% 94%;    --bg-b: 215 25% 95%;   --bg-c: 210 25% 98%; --bg-d: 220 20% 96%;
+}

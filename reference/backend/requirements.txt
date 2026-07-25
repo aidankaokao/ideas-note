@@ -1,0 +1,20 @@
+# 後端 requirements 起手檔。依實際用到的模組取捨；AI/LLM 段需要才解除註解。
+# 對應說明見 backend-conventions.md §6。Python 固定 3.11。
+
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+pydantic-settings>=2.2
+
+# ── 資料庫（SQLAlchemy Core，見 database.md）──
+sqlalchemy>=2.0
+# psycopg[binary]>=3.1     # 換 PostgreSQL 時解除註解（SQLite 不需要）
+# alembic>=1.13            # 需要遷移管理時
+
+# ── AI Agent（見 langgraph-agent.md）──
+# langgraph>=0.2
+# langchain-core>=0.3
+
+# ── LLM 串接（見 llm-integration.md）──
+# langchain-ollama>=0.2    # ChatOllama（本地 Ollama）
+# langchain-openai>=0.2    # ChatOpenAI（外部 OpenAI / 本地 vLLM）
